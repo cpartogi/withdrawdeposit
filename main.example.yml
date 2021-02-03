@@ -1,0 +1,15 @@
+api:
+  port: ":7000"
+  timeout: 1000
+auth:
+  private_key: "privatekey"
+  expire: "+30m"
+database:
+    mysql: 
+      host: "localhost"
+      port: "3306"
+      dbname: "disbursement"
+      user: ""
+      password: ""
+context:
+  timeout: 10
