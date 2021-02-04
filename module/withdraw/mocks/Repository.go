@@ -5,8 +5,8 @@ package mocks
 import (
 	context "context"
 
+	entity "github.com/cpartogi/withdrawdeposit/entity"
 	mock "github.com/stretchr/testify/mock"
-	entity "github.com/tradaruhub/auth/entity"
 
 	sql "database/sql"
 
