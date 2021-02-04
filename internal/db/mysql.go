@@ -21,9 +21,7 @@ func CreateMySqlConnection(opts map[string]string) (*MySqlDB, error) {
 		log.S().Fatal("Invalid port number : ", opts["port"])
 	}
 
-	mysqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s",
-		opts["host"], port, opts["user"], opts["password"], opts["dbname"])
+	mysqlInfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", opts["user"], opts["password"], opts["host"], port, opts["dbname"])
 
 	db, err := sql.Open("mysql", mysqlInfo)
 	if err != nil {

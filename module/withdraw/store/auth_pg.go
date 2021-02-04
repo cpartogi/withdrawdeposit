@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/cpartogi/withdrawdeposit/entity"
-	"github.com/cpartogi/withdrawdeposit/module/auth"
+	"github.com/cpartogi/withdrawdeposit/module/withdraw"
 )
 
 // SQLStore provides all functions to execute db queries and transactions.
@@ -16,7 +16,7 @@ type SQLStore struct {
 }
 
 // NewStore creates a new store
-func NewStore(db *sql.DB) auth.Repository {
+func NewStore(db *sql.DB) withdraw.Repository {
 	return &SQLStore{
 		db:      db,
 		Queries: New(db),

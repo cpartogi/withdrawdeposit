@@ -12,7 +12,7 @@ import (
 
 	"github.com/cpartogi/withdrawdeposit/constant"
 	"github.com/cpartogi/withdrawdeposit/entity"
-	"github.com/cpartogi/withdrawdeposit/module/auth"
+	"github.com/cpartogi/withdrawdeposit/module/withdraw"
 	"github.com/cpartogi/withdrawdeposit/pkg/helper"
 	"github.com/cpartogi/withdrawdeposit/pkg/utils"
 	"github.com/cpartogi/withdrawdeposit/schema/request"
@@ -22,35 +22,35 @@ import (
 )
 
 // AuthUsecase will create a usecase with its required repo
-type AuthUsecase struct {
-	authRepo       auth.Repository
+type WithdrawUsecase struct {
+	withdrawRepo   withdraw.Repository
 	contextTimeout time.Duration
 }
 
 // NewAuthUsecase will create new an contactUsecase object representation of auth.Usecase
-func NewAuthUsecase(ar auth.Repository, timeout time.Duration) auth.Usecase {
-	return &AuthUsecase{
-		authRepo:       ar,
+func NewWithdrawUsecase(ar withdraw.Repository, timeout time.Duration) withdraw.Usecase {
+	return &WithdrawUsecase{
+		withdrawRepo:   ar,
 		contextTimeout: timeout,
 	}
 }
 
-func (u *AuthUsecase) getUserByMsisdn(ctx context.Context, msisdn sql.NullString) (user entity.User, err error) {
+func (u *WithdrawUsecase) getUserByMsisdn(ctx context.Context, msisdn sql.NullString) (user entity.User, err error) {
 	msisdn.String = utils.Encrypt(msisdn.String, viper.GetString("encrypt.msisdn"))
-	user, err = u.authRepo.GetUserByMsisdn(ctx, msisdn)
+	user, err = u.withdrawRepo.GetUserByMsisdn(ctx, msisdn)
 
 	return
 }
 
-func (u *AuthUsecase) getUserByEmail(ctx context.Context, email string) (user entity.User, err error) {
+func (u *WithdrawUsecase) getUserByEmail(ctx context.Context, email string) (user entity.User, err error) {
 	email = utils.Encrypt(email, viper.GetString("encrypt.email"))
-	user, err = u.authRepo.GetUserByEmail(ctx, email)
+	user, err = u.withdrawRepo.GetUserByEmail(ctx, email)
 
 	return
 }
 
 // RegisterUser returns
-func (u *AuthUsecase) RegisterUser(c context.Context, createUserParams entity.CreateUserParams) (user entity.User, err error) {
+func (u *WithdrawUsecase) RegisterUser(c context.Context, createUserParams entity.CreateUserParams) (user entity.User, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -80,7 +80,7 @@ func (u *AuthUsecase) RegisterUser(c context.Context, createUserParams entity.Cr
 		UpdatedAt:        sql.NullInt64{Int64: timeNow, Valid: true},
 	}
 
-	user, err = u.authRepo.RegisterTx(ctx, createUserParams, createUserVerificationParams)
+	user, err = u.withdrawRepo.RegisterTx(ctx, createUserParams, createUserVerificationParams)
 	if err != nil {
 		return
 	}
@@ -95,7 +95,7 @@ func (u *AuthUsecase) RegisterUser(c context.Context, createUserParams entity.Cr
 }
 
 // RegisterCompany returns
-func (u *AuthUsecase) RegisterCompany(c context.Context, createUserParams entity.CreateUserParams) (user entity.User, err error) {
+func (u *WithdrawUsecase) RegisterCompany(c context.Context, createUserParams entity.CreateUserParams) (user entity.User, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -124,7 +124,7 @@ func (u *AuthUsecase) RegisterCompany(c context.Context, createUserParams entity
 		UpdatedAt:        sql.NullInt64{Int64: timeNow, Valid: true},
 	}
 
-	user, err = u.authRepo.RegisterTx(ctx, createUserParams, createUserVerificationParams)
+	user, err = u.withdrawRepo.RegisterTx(ctx, createUserParams, createUserVerificationParams)
 	if err != nil {
 		return
 	}
@@ -139,7 +139,7 @@ func (u *AuthUsecase) RegisterCompany(c context.Context, createUserParams entity
 }
 
 // LoginUser will
-func (u *AuthUsecase) LoginUser(c context.Context, eUser entity.User) (token response.Token, err error) {
+func (u *WithdrawUsecase) LoginUser(c context.Context, eUser entity.User) (token response.Token, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -175,7 +175,7 @@ func (u *AuthUsecase) LoginUser(c context.Context, eUser entity.User) (token res
 }
 
 // LoginOTP will
-func (u *AuthUsecase) LoginOTP(c context.Context, eUser entity.User, otp string) (token response.Token, err error) {
+func (u *WithdrawUsecase) LoginOTP(c context.Context, eUser entity.User, otp string) (token response.Token, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -189,7 +189,7 @@ func (u *AuthUsecase) LoginOTP(c context.Context, eUser entity.User, otp string)
 		return
 	}
 
-	verificationCode, err := u.authRepo.GetVerificationCodeByUserID(ctx, user.ID)
+	verificationCode, err := u.withdrawRepo.GetVerificationCodeByUserID(ctx, user.ID)
 	if err != nil {
 		return
 	}
@@ -234,7 +234,7 @@ func (u *AuthUsecase) LoginOTP(c context.Context, eUser entity.User, otp string)
 		UserStatusID:     constant.StatusVerified,
 	}
 
-	user, err = u.authRepo.LoginOTPTx(ctx, updateVerificationCodeParams, updateMsisdnParams)
+	user, err = u.withdrawRepo.LoginOTPTx(ctx, updateVerificationCodeParams, updateMsisdnParams)
 	if err != nil {
 		return
 	}
@@ -251,7 +251,7 @@ func (u *AuthUsecase) LoginOTP(c context.Context, eUser entity.User, otp string)
 }
 
 // LoginCompany will
-func (u *AuthUsecase) LoginCompany(c context.Context, eUser entity.User) (token response.Token, err error) {
+func (u *WithdrawUsecase) LoginCompany(c context.Context, eUser entity.User) (token response.Token, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -287,7 +287,7 @@ func (u *AuthUsecase) LoginCompany(c context.Context, eUser entity.User) (token 
 }
 
 // SendEmailVerification will
-func (u *AuthUsecase) SendEmailVerification(c context.Context, email string) (user entity.User, err error) {
+func (u *WithdrawUsecase) SendEmailVerification(c context.Context, email string) (user entity.User, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 	timeNow := time.Now().UTC()
@@ -303,7 +303,7 @@ func (u *AuthUsecase) SendEmailVerification(c context.Context, email string) (us
 		return
 	}
 
-	emailToken, err := u.authRepo.GetEmailTokenByUserID(ctx, user.ID)
+	emailToken, err := u.withdrawRepo.GetEmailTokenByUserID(ctx, user.ID)
 	if err != nil {
 		return
 	}
@@ -354,7 +354,7 @@ func (u *AuthUsecase) SendEmailVerification(c context.Context, email string) (us
 		updateEmailTokenParams.EmailToken.Token = verifEmailCode
 	}
 
-	emailToken, err = u.authRepo.UpdateEmailTokenByUserID(ctx, updateEmailTokenParams)
+	emailToken, err = u.withdrawRepo.UpdateEmailTokenByUserID(ctx, updateEmailTokenParams)
 	if err != nil {
 		return
 	}
@@ -366,7 +366,7 @@ func (u *AuthUsecase) SendEmailVerification(c context.Context, email string) (us
 }
 
 // SendMisscallOTP will
-func (u *AuthUsecase) SendMisscallOTP(c context.Context, msisdn string) (misscallResponse response.MisscallOTP, err error) {
+func (u *WithdrawUsecase) SendMisscallOTP(c context.Context, msisdn string) (misscallResponse response.MisscallOTP, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 	timeNow := time.Now().UTC()
@@ -382,7 +382,7 @@ func (u *AuthUsecase) SendMisscallOTP(c context.Context, msisdn string) (misscal
 		return
 	}
 
-	verificationCode, err := u.authRepo.GetVerificationCodeByUserID(ctx, user.ID)
+	verificationCode, err := u.withdrawRepo.GetVerificationCodeByUserID(ctx, user.ID)
 	if err != nil {
 		return
 	}
@@ -445,7 +445,7 @@ func (u *AuthUsecase) SendMisscallOTP(c context.Context, msisdn string) (misscal
 }
 
 // SendSMSOTP will
-func (u *AuthUsecase) SendSMSOTP(c context.Context, msisdn, smsType, signature string) (smsResponse response.SMSViro, err error) {
+func (u *WithdrawUsecase) SendSMSOTP(c context.Context, msisdn, smsType, signature string) (smsResponse response.SMSViro, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 	timeNow := time.Now().UTC()
@@ -461,7 +461,7 @@ func (u *AuthUsecase) SendSMSOTP(c context.Context, msisdn, smsType, signature s
 		return
 	}
 
-	verificationCode, err := u.authRepo.GetVerificationCodeByUserID(ctx, user.ID)
+	verificationCode, err := u.withdrawRepo.GetVerificationCodeByUserID(ctx, user.ID)
 	if err != nil {
 		return
 	}
@@ -537,7 +537,7 @@ func (u *AuthUsecase) SendSMSOTP(c context.Context, msisdn, smsType, signature s
 }
 
 // SendResetPassword for
-func (u *AuthUsecase) SendResetPassword(c context.Context, email string) (user entity.User, err error) {
+func (u *WithdrawUsecase) SendResetPassword(c context.Context, email string) (user entity.User, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 	timeNow := time.Now().UTC()
@@ -548,7 +548,7 @@ func (u *AuthUsecase) SendResetPassword(c context.Context, email string) (user e
 		return
 	}
 
-	resetPassword, err := u.authRepo.GetResetPasswordByUserID(ctx, user.ID)
+	resetPassword, err := u.withdrawRepo.GetResetPasswordByUserID(ctx, user.ID)
 	if err != nil {
 		return
 	}
@@ -589,7 +589,7 @@ func (u *AuthUsecase) SendResetPassword(c context.Context, email string) (user e
 }
 
 // ValidateResetPassword for
-func (u *AuthUsecase) ValidateResetPassword(c context.Context, email, otp string) (user entity.User, err error) {
+func (u *WithdrawUsecase) ValidateResetPassword(c context.Context, email, otp string) (user entity.User, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -598,7 +598,7 @@ func (u *AuthUsecase) ValidateResetPassword(c context.Context, email, otp string
 		return
 	}
 
-	resetPassword, err := u.authRepo.GetResetPasswordByUserID(ctx, user.ID)
+	resetPassword, err := u.withdrawRepo.GetResetPasswordByUserID(ctx, user.ID)
 	if err != nil {
 		return
 	}
@@ -649,7 +649,7 @@ func (u *AuthUsecase) ValidateResetPassword(c context.Context, email, otp string
 		UpdatedBy:     user.ID,
 	}
 
-	_, err = u.authRepo.UpdateResetPasswordByUserID(ctx, updateResetPasswordParams)
+	_, err = u.withdrawRepo.UpdateResetPasswordByUserID(ctx, updateResetPasswordParams)
 
 	user.Email = utils.Decrypt(user.Email, viper.GetString("encrypt.email"))
 
@@ -658,7 +658,7 @@ func (u *AuthUsecase) ValidateResetPassword(c context.Context, email, otp string
 }
 
 // RegisterUserLegacy returns
-func (u *AuthUsecase) RegisterUserLegacy(c context.Context, createUserLegacyParams entity.CreateUserLegacyParams) (user entity.User, err error) {
+func (u *WithdrawUsecase) RegisterUserLegacy(c context.Context, createUserLegacyParams entity.CreateUserLegacyParams) (user entity.User, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -683,7 +683,7 @@ func (u *AuthUsecase) RegisterUserLegacy(c context.Context, createUserLegacyPara
 		UpdatedAt:        sql.NullInt64{Int64: timeNow, Valid: true},
 	}
 
-	user, err = u.authRepo.RegisterLegacyTx(ctx, createUserLegacyParams, createUserVerificationParams)
+	user, err = u.withdrawRepo.RegisterLegacyTx(ctx, createUserLegacyParams, createUserVerificationParams)
 	if err != nil {
 		return
 	}
@@ -695,7 +695,7 @@ func (u *AuthUsecase) RegisterUserLegacy(c context.Context, createUserLegacyPara
 }
 
 // RegisterCompanyLegacy returns
-func (u *AuthUsecase) RegisterCompanyLegacy(c context.Context, createUserLegacyParams entity.CreateUserLegacyParams) (user entity.User, err error) {
+func (u *WithdrawUsecase) RegisterCompanyLegacy(c context.Context, createUserLegacyParams entity.CreateUserLegacyParams) (user entity.User, err error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -720,7 +720,7 @@ func (u *AuthUsecase) RegisterCompanyLegacy(c context.Context, createUserLegacyP
 		UpdatedAt:        sql.NullInt64{Int64: timeNow, Valid: true},
 	}
 
-	user, err = u.authRepo.RegisterLegacyTx(ctx, createUserLegacyParams, createUserVerificationParams)
+	user, err = u.withdrawRepo.RegisterLegacyTx(ctx, createUserLegacyParams, createUserVerificationParams)
 	if err != nil {
 		return
 	}
@@ -731,7 +731,7 @@ func (u *AuthUsecase) RegisterCompanyLegacy(c context.Context, createUserLegacyP
 	return
 }
 
-func (u *AuthUsecase) sendOTPEmail(user entity.User, otp string) {
+func (u *WithdrawUsecase) sendOTPEmail(user entity.User, otp string) {
 	user.Email = utils.Decrypt(user.Email, viper.GetString("encrypt.email"))
 
 	htmlContent, err := helper.GenerateSendOTP(user.Name, otp)
@@ -742,7 +742,7 @@ func (u *AuthUsecase) sendOTPEmail(user entity.User, otp string) {
 	helper.SendMail(user.Email, constant.SendOTPEmailSubject, htmlContent, constant.SendOTPType)
 }
 
-func (u *AuthUsecase) sendVerification(user entity.User, verifEmailCode string) {
+func (u *WithdrawUsecase) sendVerification(user entity.User, verifEmailCode string) {
 	htmlContent, err := helper.GenerateVerification(user.Name, fmt.Sprintf("%s/verify/email?token=%s",
 		viper.GetString("frontend.base_url"), verifEmailCode))
 	if err != nil {
@@ -752,7 +752,7 @@ func (u *AuthUsecase) sendVerification(user entity.User, verifEmailCode string) 
 	helper.SendMail(user.Email, constant.VerifEmailSubject, htmlContent, constant.VerifEmailType)
 }
 
-func (u *AuthUsecase) sendEmailResetPassword(user entity.User, otpCode string) {
+func (u *WithdrawUsecase) sendEmailResetPassword(user entity.User, otpCode string) {
 	htmlContent, err := helper.GenerateResetPassword(user.Name, otpCode)
 	if err != nil {
 		return
@@ -761,7 +761,7 @@ func (u *AuthUsecase) sendEmailResetPassword(user entity.User, otpCode string) {
 	helper.SendMail(user.Email, constant.SendResetPasswordSubject, htmlContent, constant.ResetPasswordType)
 }
 
-func (u *AuthUsecase) generateProfileImage() string {
+func (u *WithdrawUsecase) generateProfileImage() string {
 	min := 1
 	max := 6
 	rand.Seed(time.Now().Unix())
@@ -769,7 +769,7 @@ func (u *AuthUsecase) generateProfileImage() string {
 	return "default/bird" + picnum + ".png"
 }
 
-func (u *AuthUsecase) addFailedOTP(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (err error) {
+func (u *WithdrawUsecase) addFailedOTP(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (err error) {
 	timeNow := time.Now().UTC()
 	holdTime := timeNow.Add(viper.GetDuration("otp.input_hold_time")).Unix()
 
@@ -784,11 +784,11 @@ func (u *AuthUsecase) addFailedOTP(ctx context.Context, verificationCode entity.
 		UpdatedAt:        sql.NullInt64{Int64: timeNow.Unix(), Valid: true},
 		UpdatedBy:        userID,
 	}
-	_, err = u.authRepo.UpdateVerificationCodeByUserID(ctx, updateVerificationCodeParams)
+	_, err = u.withdrawRepo.UpdateVerificationCodeByUserID(ctx, updateVerificationCodeParams)
 	return
 }
 
-func (u *AuthUsecase) checkHold(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (entity.VerificationCode, error) {
+func (u *WithdrawUsecase) checkHold(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (entity.VerificationCode, error) {
 	timeNow := time.Now().UTC()
 	holdTimeUTC := time.Unix(verificationCode.HoldUntil.Int64, 0).UTC()
 
@@ -807,7 +807,7 @@ func (u *AuthUsecase) checkHold(ctx context.Context, verificationCode entity.Ver
 	return verificationCode, nil
 }
 
-func (u *AuthUsecase) checkHoldInputOTP(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (entity.VerificationCode, error) {
+func (u *WithdrawUsecase) checkHoldInputOTP(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (entity.VerificationCode, error) {
 	timeNow := time.Now().UTC()
 	holdTimeUTC := time.Unix(verificationCode.HoldUntil.Int64, 0).UTC()
 
@@ -822,7 +822,7 @@ func (u *AuthUsecase) checkHoldInputOTP(ctx context.Context, verificationCode en
 	return verificationCode, nil
 }
 
-func (u *AuthUsecase) checkExpiredOtp(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) bool {
+func (u *WithdrawUsecase) checkExpiredOtp(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) bool {
 	timeNow := time.Now().UTC()
 	tokenCreatedAt := time.Unix(verificationCode.TokenCreatedAt.Int64, 0).UTC()
 
@@ -837,7 +837,7 @@ func (u *AuthUsecase) checkExpiredOtp(ctx context.Context, verificationCode enti
 	return false
 }
 
-func (u *AuthUsecase) resetFailedCount(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (entity.VerificationCode, error) {
+func (u *WithdrawUsecase) resetFailedCount(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (entity.VerificationCode, error) {
 	timeNow := time.Now().UTC()
 	verificationCode.FailedCount = 0
 	verificationCode.HoldUntil = sql.NullInt64{Int64: 0, Valid: false}
@@ -847,11 +847,11 @@ func (u *AuthUsecase) resetFailedCount(ctx context.Context, verificationCode ent
 		UpdatedAt:        sql.NullInt64{Int64: timeNow.Unix(), Valid: true},
 		UpdatedBy:        userID,
 	}
-	verificationCodeData, err := u.authRepo.UpdateVerificationCodeByUserID(ctx, updateVerificationCodeParams)
+	verificationCodeData, err := u.withdrawRepo.UpdateVerificationCodeByUserID(ctx, updateVerificationCodeParams)
 	return verificationCodeData, err
 }
 
-func (u *AuthUsecase) checkHoldEmail(ctx context.Context, emailToken entity.EmailToken, userID uuid.UUID) (entity.EmailToken, error) {
+func (u *WithdrawUsecase) checkHoldEmail(ctx context.Context, emailToken entity.EmailToken, userID uuid.UUID) (entity.EmailToken, error) {
 	timeNow := time.Now().UTC()
 	holdTimeUTC := time.Unix(emailToken.HoldUntil.Int64, 0).UTC()
 
@@ -866,7 +866,7 @@ func (u *AuthUsecase) checkHoldEmail(ctx context.Context, emailToken entity.Emai
 	return emailToken, nil
 }
 
-func (u *AuthUsecase) resetEmailRequestCount(ctx context.Context, emailToken entity.EmailToken, userID uuid.UUID) (entity.EmailToken, error) {
+func (u *WithdrawUsecase) resetEmailRequestCount(ctx context.Context, emailToken entity.EmailToken, userID uuid.UUID) (entity.EmailToken, error) {
 	timeNow := time.Now().UTC()
 	emailToken.RequestCount = 0
 	emailToken.HoldUntil = sql.NullInt64{Int64: 0, Valid: false}
@@ -876,11 +876,11 @@ func (u *AuthUsecase) resetEmailRequestCount(ctx context.Context, emailToken ent
 		UpdatedAt:  sql.NullInt64{Int64: timeNow.Unix(), Valid: true},
 		UpdatedBy:  userID,
 	}
-	emailToken, err := u.authRepo.UpdateEmailTokenByUserID(ctx, updateEmailTokenParams)
+	emailToken, err := u.withdrawRepo.UpdateEmailTokenByUserID(ctx, updateEmailTokenParams)
 	return emailToken, err
 }
 
-func (u *AuthUsecase) addRequestOTP(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (err error) {
+func (u *WithdrawUsecase) addRequestOTP(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (err error) {
 	timeNow := time.Now().UTC()
 	holdTime := timeNow.Add(viper.GetDuration("otp.request_hold_time")).Unix()
 
@@ -896,11 +896,11 @@ func (u *AuthUsecase) addRequestOTP(ctx context.Context, verificationCode entity
 		UpdatedAt:        sql.NullInt64{Int64: timeNow.Unix(), Valid: true},
 		UpdatedBy:        userID,
 	}
-	_, err = u.authRepo.UpdateVerificationCodeByUserID(ctx, updateVerificationCodeParams)
+	_, err = u.withdrawRepo.UpdateVerificationCodeByUserID(ctx, updateVerificationCodeParams)
 	return
 }
 
-func (u *AuthUsecase) resetRequestCount(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (entity.VerificationCode, error) {
+func (u *WithdrawUsecase) resetRequestCount(ctx context.Context, verificationCode entity.VerificationCode, userID uuid.UUID) (entity.VerificationCode, error) {
 	timeNow := time.Now().UTC()
 	verificationCode.RequestCount = 0
 	verificationCode.HoldUntil = sql.NullInt64{Int64: 0, Valid: false}
@@ -911,7 +911,7 @@ func (u *AuthUsecase) resetRequestCount(ctx context.Context, verificationCode en
 		UpdatedAt:        sql.NullInt64{Int64: timeNow.Unix(), Valid: true},
 		UpdatedBy:        userID,
 	}
-	verificationCodeData, err := u.authRepo.UpdateVerificationCodeByUserID(ctx, updateVerificationCodeParams)
+	verificationCodeData, err := u.withdrawRepo.UpdateVerificationCodeByUserID(ctx, updateVerificationCodeParams)
 	return verificationCodeData, err
 }
 
@@ -923,7 +923,7 @@ func randOTP() int64 {
 	return int64(otp)
 }
 
-func (u *AuthUsecase) checkHoldResetPassword(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) (entity.ResetPassword, error) {
+func (u *WithdrawUsecase) checkHoldResetPassword(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) (entity.ResetPassword, error) {
 	timeNow := time.Now().UTC()
 	holdTimeUTC := time.Unix(resetPassword.HoldUntil.Int64, 0).UTC()
 
@@ -942,7 +942,7 @@ func (u *AuthUsecase) checkHoldResetPassword(ctx context.Context, resetPassword 
 	return resetPassword, nil
 }
 
-func (u *AuthUsecase) resetRequestCountResetPassword(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) (entity.ResetPassword, error) {
+func (u *WithdrawUsecase) resetRequestCountResetPassword(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) (entity.ResetPassword, error) {
 	timeNow := time.Now().UTC()
 	resetPassword.RequestCount = 0
 	resetPassword.HoldUntil = sql.NullInt64{Int64: 0, Valid: false}
@@ -953,11 +953,11 @@ func (u *AuthUsecase) resetRequestCountResetPassword(ctx context.Context, resetP
 		UpdatedAt:     sql.NullInt64{Int64: timeNow.Unix(), Valid: true},
 		UpdatedBy:     userID,
 	}
-	resetPasswordData, err := u.authRepo.UpdateResetPasswordByUserID(ctx, updateResetPasswordParams)
+	resetPasswordData, err := u.withdrawRepo.UpdateResetPasswordByUserID(ctx, updateResetPasswordParams)
 	return resetPasswordData, err
 }
 
-func (u *AuthUsecase) checkResetPasswordExpiredOtp(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) bool {
+func (u *WithdrawUsecase) checkResetPasswordExpiredOtp(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) bool {
 	timeNow := time.Now().UTC()
 	tokenCreatedAt := time.Unix(resetPassword.TokenCreatedAt.Int64, 0).UTC()
 
@@ -965,7 +965,7 @@ func (u *AuthUsecase) checkResetPasswordExpiredOtp(ctx context.Context, resetPas
 
 }
 
-func (u *AuthUsecase) addRequestResetPassword(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) (err error) {
+func (u *WithdrawUsecase) addRequestResetPassword(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) (err error) {
 	timeNow := time.Now().UTC()
 	holdTime := timeNow.Add(viper.GetDuration("reset_password.request_hold_time")).Unix()
 
@@ -981,11 +981,11 @@ func (u *AuthUsecase) addRequestResetPassword(ctx context.Context, resetPassword
 		UpdatedAt:     sql.NullInt64{Int64: timeNow.Unix(), Valid: true},
 		UpdatedBy:     userID,
 	}
-	_, err = u.authRepo.UpdateResetPasswordByUserID(ctx, updateResetPasswordParams)
+	_, err = u.withdrawRepo.UpdateResetPasswordByUserID(ctx, updateResetPasswordParams)
 	return
 }
 
-func (u *AuthUsecase) addFailedResetPasswordOTP(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) (err error) {
+func (u *WithdrawUsecase) addFailedResetPasswordOTP(ctx context.Context, resetPassword entity.ResetPassword, userID uuid.UUID) (err error) {
 	timeNow := time.Now().UTC()
 	holdTime := timeNow.Add(viper.GetDuration("reset_password.input_hold_time")).Unix()
 
@@ -1000,6 +1000,18 @@ func (u *AuthUsecase) addFailedResetPasswordOTP(ctx context.Context, resetPasswo
 		UpdatedAt:     sql.NullInt64{Int64: timeNow.Unix(), Valid: true},
 		UpdatedBy:     userID,
 	}
-	_, err = u.authRepo.UpdateResetPasswordByUserID(ctx, updateResetPasswordParams)
+	_, err = u.withdrawRepo.UpdateResetPasswordByUserID(ctx, updateResetPasswordParams)
 	return
+}
+
+func (u *WithdrawUsecase) DepositBalance(ctx context.Context, seller_id string) (bal response.Balance, err error) {
+	resp := response.Balance{}
+
+	deposit, err := u.withdrawRepo.DepositBalance(ctx, seller_id)
+
+	if err != nil {
+		return resp, err
+	}
+
+	return deposit, err
 }

@@ -13,4 +13,6 @@ const (
 	SuccessSendResetPassword = "Success send reset password"
 	// SuccessValidate is
 	SuccessValidate = "Success validate"
+	// SuccessGetData is
+	SuccessGetData = "Success get data"
 )

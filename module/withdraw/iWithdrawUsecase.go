@@ -1,4 +1,4 @@
-package auth
+package withdraw
 
 import (
 	"context"
@@ -23,4 +23,7 @@ type Usecase interface {
 	// legacy
 	RegisterUserLegacy(ctx context.Context, createUserLegacyParams entity.CreateUserLegacyParams) (user entity.User, err error)
 	RegisterCompanyLegacy(ctx context.Context, createUserLegacyParams entity.CreateUserLegacyParams) (user entity.User, err error)
+
+	//deposit
+	DepositBalance(ctx context.Context, seller_id string) (bal response.Balance, err error)
 }

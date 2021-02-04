@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/cpartogi/withdrawdeposit/entity"
-	"github.com/cpartogi/withdrawdeposit/module/auth/mocks"
+	"github.com/cpartogi/withdrawdeposit/module/withdraw/mocks"
 	"github.com/cpartogi/withdrawdeposit/schema/request"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -107,8 +107,8 @@ func TestRegisterUserErrorParsing(t *testing.T) {
 			c := e.NewContext(req, rec)
 			c.SetPath("/v2/register-user")
 
-			handler := AuthHandler{
-				authUsecase: mockUCase,
+			handler := WithdrawHandler{
+				withdrawUsecase: mockUCase,
 			}
 
 			err = handler.RegisterUser(c)
@@ -193,8 +193,8 @@ func TestRegisterUser(t *testing.T) {
 			c := e.NewContext(req, rec)
 			c.SetPath("/v2/register-user")
 
-			handler := AuthHandler{
-				authUsecase: mockUCase,
+			handler := WithdrawHandler{
+				withdrawUsecase: mockUCase,
 			}
 
 			err = handler.RegisterUser(c)

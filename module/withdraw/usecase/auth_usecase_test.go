@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/cpartogi/withdrawdeposit/entity"
-	"github.com/cpartogi/withdrawdeposit/module/auth/mocks"
+	"github.com/cpartogi/withdrawdeposit/module/withdraw/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -39,7 +39,7 @@ func TestRegisterUser(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		tempCreateUser := mockCreateUser
-		u := NewAuthUsecase(mockRepo, 2)
+		u := NewWithdrawUsecase(mockRepo, 2)
 
 		mockRepo.On("RegisterTx", mock.Anything, mock.AnythingOfType("entity.CreateUserParams"), mock.AnythingOfType("entity.CreateUserVerificationDataParams")).
 			Return(user, nil).Once()

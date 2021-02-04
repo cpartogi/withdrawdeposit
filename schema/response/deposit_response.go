@@ -1,12 +1,8 @@
 package response
 
-import (
-	"github.com/google/uuid"
-)
-
 type Balance struct {
-	Balance  int       `json:"balance" db:"amount"`
-	SellerId uuid.UUID `json:"seller_id" db:"seller_id"`
+	Balance  int    `json:"balance"`
+	SellerId string `json:"seller_id"`
 }
 
 type BalanceLog struct {

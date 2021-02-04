@@ -3,7 +3,7 @@ package http
 import (
 	"github.com/cpartogi/withdrawdeposit/constant"
 	"github.com/cpartogi/withdrawdeposit/middleware"
-	"github.com/cpartogi/withdrawdeposit/module/auth"
+	"github.com/cpartogi/withdrawdeposit/module/withdraw"
 	"github.com/cpartogi/withdrawdeposit/pkg/utils"
 	"github.com/cpartogi/withdrawdeposit/schema/request"
 	"github.com/cpartogi/withdrawdeposit/schema/response"
@@ -11,14 +11,14 @@ import (
 )
 
 // AuthHandler  represent the httphandler for auth
-type AuthHandler struct {
-	authUsecase auth.Usecase
+type WithdrawHandler struct {
+	withdrawUsecase withdraw.Usecase
 }
 
 // NewAuthHandler will initialize the contact/ resources endpoint
-func NewAuthHandler(e *echo.Echo, us auth.Usecase) {
-	handler := &AuthHandler{
-		authUsecase: us,
+func NewWithdrawHandler(e *echo.Echo, us withdraw.Usecase) {
+	handler := &WithdrawHandler{
+		withdrawUsecase: us,
 	}
 	router := e.Group("/v2")
 
@@ -38,6 +38,9 @@ func NewAuthHandler(e *echo.Echo, us auth.Usecase) {
 	legacy := router.Group("/legacy")
 	legacy.POST("/register-user", handler.RegisterUserLegacy, middleware.ApikeyMiddleware)
 	legacy.POST("/register-company", handler.RegisterCompanyLegacy, middleware.ApikeyMiddleware)
+
+	withdrawrouter := e.Group("/v1")
+	withdrawrouter.GET("/deposit/balance/:seller_id", handler.DepositBalance)
 }
 
 // RegisterUser godoc
@@ -54,7 +57,7 @@ func NewAuthHandler(e *echo.Echo, us auth.Usecase) {
 // @Failure 500 {object} response.Base
 // @Router /v2/register-user [post]
 // Register handles HTTP request to create new account
-func (h *AuthHandler) RegisterUser(c echo.Context) error {
+func (h *WithdrawHandler) RegisterUser(c echo.Context) error {
 	req := request.UserRegistration{}
 	res := response.Register{}
 	ctx := c.Request().Context()
@@ -73,7 +76,7 @@ func (h *AuthHandler) RegisterUser(c echo.Context) error {
 
 	createUserParams := req.CreateUserParams()
 
-	user, err := h.authUsecase.RegisterUser(ctx, createUserParams)
+	user, err := h.withdrawUsecase.RegisterUser(ctx, createUserParams)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -97,7 +100,7 @@ func (h *AuthHandler) RegisterUser(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/register-company [post]
 // Register handles HTTP request to create new account
-func (h *AuthHandler) RegisterCompany(c echo.Context) error {
+func (h *WithdrawHandler) RegisterCompany(c echo.Context) error {
 	req := request.CompanyRegistration{}
 	res := response.Register{}
 	ctx := c.Request().Context()
@@ -116,7 +119,7 @@ func (h *AuthHandler) RegisterCompany(c echo.Context) error {
 
 	createUserParams := req.CreateUserParams()
 
-	user, err := h.authUsecase.RegisterCompany(ctx, createUserParams)
+	user, err := h.withdrawUsecase.RegisterCompany(ctx, createUserParams)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -140,7 +143,7 @@ func (h *AuthHandler) RegisterCompany(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/login-user [post]
 // LoginUser handles HTTP request for user login
-func (h *AuthHandler) LoginUser(c echo.Context) error {
+func (h *WithdrawHandler) LoginUser(c echo.Context) error {
 	req := request.UserLogin{}
 	res := response.Login{}
 	ctx := c.Request().Context()
@@ -159,7 +162,7 @@ func (h *AuthHandler) LoginUser(c echo.Context) error {
 
 	user := req.User()
 
-	token, err := h.authUsecase.LoginUser(ctx, user)
+	token, err := h.withdrawUsecase.LoginUser(ctx, user)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -183,7 +186,7 @@ func (h *AuthHandler) LoginUser(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/login-company [post]
 // LoginCompany handles HTTP request for company login
-func (h *AuthHandler) LoginCompany(c echo.Context) error {
+func (h *WithdrawHandler) LoginCompany(c echo.Context) error {
 	req := request.CompanyLogin{}
 	res := response.Login{}
 	ctx := c.Request().Context()
@@ -202,7 +205,7 @@ func (h *AuthHandler) LoginCompany(c echo.Context) error {
 
 	user := req.User()
 
-	token, err := h.authUsecase.LoginCompany(ctx, user)
+	token, err := h.withdrawUsecase.LoginCompany(ctx, user)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -226,7 +229,7 @@ func (h *AuthHandler) LoginCompany(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/login-otp [post]
 // LoginOTP handles HTTP request for login with otp code for user
-func (h *AuthHandler) LoginOTP(c echo.Context) error {
+func (h *WithdrawHandler) LoginOTP(c echo.Context) error {
 	req := request.OTPLogin{}
 	res := response.Login{}
 	ctx := c.Request().Context()
@@ -245,7 +248,7 @@ func (h *AuthHandler) LoginOTP(c echo.Context) error {
 
 	user := req.User()
 
-	token, err := h.authUsecase.LoginOTP(ctx, user, req.OTP)
+	token, err := h.withdrawUsecase.LoginOTP(ctx, user, req.OTP)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -269,7 +272,7 @@ func (h *AuthHandler) LoginOTP(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/send/email-verification [post]
 // SendEmailVerification handles HTTP request for Send email verification
-func (h *AuthHandler) SendEmailVerification(c echo.Context) error {
+func (h *WithdrawHandler) SendEmailVerification(c echo.Context) error {
 	req := request.EmailVerification{}
 	res := response.EmailVerification{}
 	ctx := c.Request().Context()
@@ -286,7 +289,7 @@ func (h *AuthHandler) SendEmailVerification(c echo.Context) error {
 		return utils.ErrorValidate(c, err, res)
 	}
 
-	user, err := h.authUsecase.SendEmailVerification(ctx, req.Email)
+	user, err := h.withdrawUsecase.SendEmailVerification(ctx, req.Email)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -310,7 +313,7 @@ func (h *AuthHandler) SendEmailVerification(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/send/misscall [post]
 // SendMisscallOTP handles HTTP request for Send miscall otp
-func (h *AuthHandler) SendMisscallOTP(c echo.Context) error {
+func (h *WithdrawHandler) SendMisscallOTP(c echo.Context) error {
 	req := request.MisscallOTP{}
 	res := response.MisscallOTPNumber{}
 	ctx := c.Request().Context()
@@ -327,7 +330,7 @@ func (h *AuthHandler) SendMisscallOTP(c echo.Context) error {
 		return utils.ErrorValidate(c, err, res)
 	}
 
-	misscallResponse, err := h.authUsecase.SendMisscallOTP(ctx, req.Msisdn)
+	misscallResponse, err := h.withdrawUsecase.SendMisscallOTP(ctx, req.Msisdn)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -351,7 +354,7 @@ func (h *AuthHandler) SendMisscallOTP(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/send/otp [post]
 // SendSMSOTP handles HTTP request for Send miscall otp
-func (h *AuthHandler) SendSMSOTP(c echo.Context) error {
+func (h *WithdrawHandler) SendSMSOTP(c echo.Context) error {
 	req := request.SMSOTP{}
 	res := response.SMSOTP{}
 	ctx := c.Request().Context()
@@ -368,7 +371,7 @@ func (h *AuthHandler) SendSMSOTP(c echo.Context) error {
 		return utils.ErrorValidate(c, err, res)
 	}
 
-	smsResponse, err := h.authUsecase.SendSMSOTP(ctx, req.Msisdn, req.Type, req.Signature)
+	smsResponse, err := h.withdrawUsecase.SendSMSOTP(ctx, req.Msisdn, req.Type, req.Signature)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -392,7 +395,7 @@ func (h *AuthHandler) SendSMSOTP(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/send/reset-password [post]
 // SendResetPassword handles HTTP request for Send reset password otp
-func (h *AuthHandler) SendResetPassword(c echo.Context) error {
+func (h *WithdrawHandler) SendResetPassword(c echo.Context) error {
 	req := request.ResetPassword{}
 	res := response.ResetPassword{}
 	ctx := c.Request().Context()
@@ -409,7 +412,7 @@ func (h *AuthHandler) SendResetPassword(c echo.Context) error {
 		return utils.ErrorValidate(c, err, res)
 	}
 
-	user, err := h.authUsecase.SendResetPassword(ctx, req.Email)
+	user, err := h.withdrawUsecase.SendResetPassword(ctx, req.Email)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -433,7 +436,7 @@ func (h *AuthHandler) SendResetPassword(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/validate/reset-password [post]
 // ValidateResetPassword handles HTTP request for validate reset password otp
-func (h *AuthHandler) ValidateResetPassword(c echo.Context) error {
+func (h *WithdrawHandler) ValidateResetPassword(c echo.Context) error {
 	req := request.ValidateResetPassword{}
 	res := response.ValidateResetPassword{}
 	ctx := c.Request().Context()
@@ -450,7 +453,7 @@ func (h *AuthHandler) ValidateResetPassword(c echo.Context) error {
 		return utils.ErrorValidate(c, err, res)
 	}
 
-	user, err := h.authUsecase.ValidateResetPassword(ctx, req.Email, req.OTP)
+	user, err := h.withdrawUsecase.ValidateResetPassword(ctx, req.Email, req.OTP)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -475,7 +478,7 @@ func (h *AuthHandler) ValidateResetPassword(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/legacy/register-user [post]
 // Register handles HTTP request to create new account
-func (h *AuthHandler) RegisterUserLegacy(c echo.Context) error {
+func (h *WithdrawHandler) RegisterUserLegacy(c echo.Context) error {
 	req := request.UserRegistrationLegacy{}
 	res := response.Register{}
 	ctx := c.Request().Context()
@@ -494,7 +497,7 @@ func (h *AuthHandler) RegisterUserLegacy(c echo.Context) error {
 
 	createUserLegacyParams := req.CreateUserLegacyParams()
 
-	user, err := h.authUsecase.RegisterUserLegacy(ctx, createUserLegacyParams)
+	user, err := h.withdrawUsecase.RegisterUserLegacy(ctx, createUserLegacyParams)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -519,7 +522,7 @@ func (h *AuthHandler) RegisterUserLegacy(c echo.Context) error {
 // @Failure 500 {object} response.Base
 // @Router /v2/legacy/register-company [post]
 // Register handles HTTP request to create new account
-func (h *AuthHandler) RegisterCompanyLegacy(c echo.Context) error {
+func (h *WithdrawHandler) RegisterCompanyLegacy(c echo.Context) error {
 	req := request.CompanyRegistrationLegacy{}
 	res := response.Register{}
 	ctx := c.Request().Context()
@@ -538,7 +541,7 @@ func (h *AuthHandler) RegisterCompanyLegacy(c echo.Context) error {
 
 	createUserLegacyParams := req.CreateUserLegacyParams()
 
-	user, err := h.authUsecase.RegisterCompanyLegacy(ctx, createUserLegacyParams)
+	user, err := h.withdrawUsecase.RegisterCompanyLegacy(ctx, createUserLegacyParams)
 	if err != nil {
 		return utils.ErrorResponse(c, err, res)
 	}
@@ -546,4 +549,33 @@ func (h *AuthHandler) RegisterCompanyLegacy(c echo.Context) error {
 	res.Format(user)
 
 	return utils.CreatedResponse(c, "Success register new company", res)
+}
+
+// DepositBalance godoc
+// @Summary Seller deposit balance
+// @Description Seller deposit balance
+// @Tags Deposit
+// @Accept  json
+// @Produce  json
+// @Param seller_id path string true "seller id"
+// @Success 200 {object} response.SwaggerDepositBalance
+// @Failure 400 {object} response.Base
+// @Failure 404 {object} response.Base
+// @Failure 422 {object} response.Base
+// @Failure 500 {object} response.Base
+// @Router /v1/deposit/balance/{seller_id} [get]
+// DepositBalance handles HTTP request for deposit balance
+func (h *WithdrawHandler) DepositBalance(c echo.Context) error {
+
+	ctx := c.Request().Context()
+	sellerId := c.Param("seller_id")
+
+	res := response.Balance{}
+
+	bal, err := h.withdrawUsecase.DepositBalance(ctx, sellerId)
+	if err != nil {
+		return utils.ErrorResponse(c, err, res)
+	}
+
+	return utils.SuccessResponse(c, constant.SuccessGetData, bal)
 }

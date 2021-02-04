@@ -93,8 +93,6 @@ github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LB
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/gogo/protobuf v1.1.1/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
 github.com/gogo/protobuf v1.2.1/go.mod h1:hp+jE20tsWTFYpLwKvXlhS1hjn+gTNwPg2I6zVXpSg4=
-github.com/gojektech/heimdall v1.0.0 h1:0Kz52HazR5OKP77547TQUvO6DEo669roni7s1iz+NoI=
-github.com/gojektech/heimdall v5.0.2+incompatible h1:mfGLnHNTKN7b1OMTO4ZvL3oT2P13kqTTV7owK7BZDck=
 github.com/gojektech/heimdall/v6 v6.1.0 h1:M9L1xryMKGWUlAA33D0r0BaKiXWzvuReltDPPkC5loM=
 github.com/gojektech/heimdall/v6 v6.1.0/go.mod h1:8g/ohsh0GXn8fzOf+qVrjX5pQLf7qQy8vEBjBUJ/9L4=
 github.com/gojektech/valkyrie v0.0.0-20180215180059-6aee720afcdf h1:WUa/Tvd+vZuW17gOND3CryHvG0yc2nhC1gr+H2F7bFM=

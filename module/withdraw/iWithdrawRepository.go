@@ -1,10 +1,11 @@
-package auth
+package withdraw
 
 import (
 	"context"
 	"database/sql"
 
 	"github.com/cpartogi/withdrawdeposit/entity"
+	"github.com/cpartogi/withdrawdeposit/schema/response"
 	"github.com/google/uuid"
 )
 
@@ -28,4 +29,7 @@ type Repository interface {
 	// Legacy
 	CreateUserLegacy(ctx context.Context, arg entity.CreateUserLegacyParams) (entity.User, error)
 	RegisterLegacyTx(ctx context.Context, user entity.CreateUserLegacyParams, userVerification entity.CreateUserVerificationDataParams) (entity.User, error)
+
+	//deposit
+	DepositBalance(ctx context.Context, seller_id string) (bal response.Balance, err error)
 }

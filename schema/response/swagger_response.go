@@ -78,3 +78,11 @@ type SwaggerResetPassword struct {
 		Email string `json:"email,omitempty"`
 	} `json:"data"`
 }
+
+type SwaggerDepositBalance struct {
+	Base
+	Data struct {
+		Balance  int    `json:"balance,omitempty"`
+		SellerId string `json:"seller_id,omitempty"`
+	} `json:"data"`
+}

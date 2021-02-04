@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
-	_authHttpHandler "github.com/cpartogi/withdrawdeposit/module/auth/handler/http"
-	_authRepo "github.com/cpartogi/withdrawdeposit/module/auth/store"
-	_auth "github.com/cpartogi/withdrawdeposit/module/auth/usecase"
+	_withdrawHttpHandler "github.com/cpartogi/withdrawdeposit/module/withdraw/handler/http"
+	_withdrawRepo "github.com/cpartogi/withdrawdeposit/module/withdraw/store"
+	_withdraw "github.com/cpartogi/withdrawdeposit/module/withdraw/usecase"
 
 	_ "github.com/cpartogi/withdrawdeposit/docs"
 	appInit "github.com/cpartogi/withdrawdeposit/init"
@@ -26,7 +26,8 @@ func init() {
 func main() {
 
 	// Get PG Conn Instance
-	pgDb, err := appInit.ConnectToPGServer()
+	//	pgDb, err := appInit.ConnectToPGServer()
+	pgDb, err := appInit.ConnectToMySqlServer()
 	if err != nil {
 		log.S().Fatal(err)
 	}
@@ -49,13 +50,13 @@ func main() {
 	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
 
 	// DI: Repository & Usecase
-	authRepo := _authRepo.NewStore(pgDb.DB)
+	withdrawRepo := _withdrawRepo.NewStore(pgDb.DB)
 
-	authUc := _auth.NewAuthUsecase(authRepo, timeoutContext)
+	withdrawUc := _withdraw.NewWithdrawUsecase(withdrawRepo, timeoutContext)
 
 	// End of DI Stepss
 
-	_authHttpHandler.NewAuthHandler(e, authUc)
+	_withdrawHttpHandler.NewWithdrawHandler(e, withdrawUc)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
