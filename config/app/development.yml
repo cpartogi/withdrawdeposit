@@ -1,0 +1,16 @@
+api:
+  port: ":7000"
+  timeout: 1000
+auth:
+  private_key: "privatekey"
+  expire: "+30m"
+database:
+    mysql: 
+      host: "127.0.0.1"
+      port: "3306"
+      dbname: ""
+      user: ""
+      password: ""
+      sslmode: ""
+context:
+  timeout: 2
