@@ -1015,3 +1015,44 @@ func (u *WithdrawUsecase) DepositBalance(ctx context.Context, seller_id string) 
 
 	return deposit, err
 }
+
+func (u *WithdrawUsecase) DepositBalanceLog(ctx context.Context, seller_id string, date_from string, date_to string) (bal []response.BalanceLog, err error) {
+	resp := []response.BalanceLog{}
+
+	deposit, err := u.withdrawRepo.DepositBalanceLog(ctx, seller_id, date_from, date_to)
+
+	if err != nil {
+		return resp, err
+	}
+
+	return deposit, err
+}
+
+func (u *WithdrawUsecase) DepositRegister(ctx context.Context, depositRegister entity.Balance) (dep response.DepositRegistration, err error) {
+	resp := response.DepositRegistration{
+		SellerId: depositRegister.SellerId,
+		Amount:   depositRegister.Amount,
+	}
+
+	req := entity.Balance{
+		Amount:   depositRegister.Amount,
+		SellerId: depositRegister.SellerId,
+	}
+
+	// cek if data exist
+	sellerId := depositRegister.SellerId
+
+	_, err = u.withdrawRepo.GetDepositBySellerid(ctx, sellerId)
+
+	if err != nil {
+		return resp, err
+	}
+
+	regdep, err := u.withdrawRepo.DepositRegister(ctx, req)
+
+	if err != nil {
+		return
+	}
+
+	return regdep, err
+}

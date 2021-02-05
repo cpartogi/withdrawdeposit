@@ -26,4 +26,6 @@ type Usecase interface {
 
 	//deposit
 	DepositBalance(ctx context.Context, seller_id string) (bal response.Balance, err error)
+	DepositBalanceLog(ctx context.Context, seller_id string, date_from string, date_to string) (bal []response.BalanceLog, err error)
+	DepositRegister(ctx context.Context, depositRegister entity.Balance) (dep response.DepositRegistration, err error)
 }

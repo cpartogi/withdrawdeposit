@@ -86,3 +86,24 @@ type SwaggerDepositBalance struct {
 		SellerId string `json:"seller_id,omitempty"`
 	} `json:"data"`
 }
+
+type SwaggerDepositBalanceLog struct {
+	Base
+	Data []DataBalanceLog `json:"data"`
+}
+
+type DataBalanceLog struct {
+	LogDescription string `json:"log_description"`
+	DepositBefore  int    `json:"deposit_before"`
+	Amount         int    `json:"amount"`
+	UpdatedDate    string `json:"updated_date"`
+	UpdatedBy      string `json:"updated_by"`
+}
+
+type SwaggerDepositRegister struct {
+	Base
+	Data struct {
+		Amount   int    `json:"amount,omitempty"`
+		SellerId string `json:"seller_id,omitempty"`
+	} `json:"data"`
+}

@@ -35,4 +35,6 @@ var (
 	ErrMsisdnNotVerified = fmt.Errorf("phone number is not verified")
 	// ErrCannotResetPassword is
 	ErrCannotResetPassword = fmt.Errorf("cannot send reset password otp code, please try again later")
+	// ErrConflict is
+	ErrConflict = fmt.Errorf("conflict, data already exist")
 )

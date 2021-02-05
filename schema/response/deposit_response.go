@@ -6,9 +6,14 @@ type Balance struct {
 }
 
 type BalanceLog struct {
-	LogDescription string `json:"log_description" db:"log_description"`
-	DepositBefore  int    `json:"deposit_before" db:"deposit_before"`
-	Amount         int    `json:"amount" db:"amount"`
-	UpdatedDate    string `json:"updated_date" db:"updated_date"`
-	UpdatedBy      string `json:"updated_by" db:"updated_by"`
+	LogDescription string `json:"log_description"`
+	DepositBefore  int    `json:"deposit_before"`
+	Amount         int    `json:"amount"`
+	UpdatedDate    string `json:"updated_date"`
+	UpdatedBy      string `json:"updated_by"`
+}
+
+type DepositRegistration struct {
+	SellerId string `json:"seller_id,omitempty"`
+	Amount   int    `json:"amount,omitempty"`
 }

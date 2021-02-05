@@ -50,6 +50,7 @@ var commonErrorMap = map[error]int{
 	constant.ErrEmailNotVerified:        http.StatusBadRequest,
 	constant.ErrMsisdnNotVerified:       http.StatusBadRequest,
 	constant.ErrCannotResetPassword:     http.StatusBadRequest,
+	constant.ErrConflict:                http.StatusConflict,
 }
 
 // CommonError is
@@ -85,6 +86,8 @@ func CommonError(err error) (int, error) {
 		return commonErrorMap[constant.ErrMsisdnNotVerified], constant.ErrMsisdnNotVerified
 	case constant.ErrCannotResetPassword:
 		return commonErrorMap[constant.ErrCannotResetPassword], constant.ErrCannotResetPassword
+	case constant.ErrConflict:
+		return commonErrorMap[constant.ErrConflict], constant.ErrConflict
 	}
 	return http.StatusInternalServerError, fmt.Errorf(err.Error())
 }
