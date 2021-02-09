@@ -267,3 +267,135 @@ func (_m *Usecase) ValidateResetPassword(ctx context.Context, email string, otp 
 
 	return r0, r1
 }
+
+//Deposit balance
+func (_m *Usecase) DepositBalance(ctx context.Context, seller_id string) (response.Balance, error) {
+	ret := _m.Called(ctx, seller_id)
+
+	var r0 response.Balance
+	if rf, ok := ret.Get(0).(func(context.Context, string) response.Balance); ok {
+		r0 = rf(ctx, seller_id)
+	} else {
+		r0 = ret.Get(0).(response.Balance)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, seller_id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+
+}
+
+//Deposit balance log
+func (_m *Usecase) DepositBalanceLog(ctx context.Context, seller_id string, date_from string, date_to string) (bal []response.BalanceLog, err error) {
+	ret := _m.Called(ctx, seller_id, date_from, date_to)
+
+	var r0 []response.BalanceLog
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) []response.BalanceLog); ok {
+		r0 = rf(ctx, seller_id, date_from, date_to)
+	} else {
+		r0 = ret.Get(0).([]response.BalanceLog)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, string, string) error); ok {
+		r1 = rf(ctx, seller_id, date_from, date_to)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+
+}
+
+//deposit register
+func (_m *Usecase) DepositRegister(ctx context.Context, arg entity.Balance) (dep response.DepositRegistration, err error) {
+	ret := _m.Called(ctx, arg)
+
+	var r0 response.DepositRegistration
+
+	if rf, ok := ret.Get(0).(func(context.Context, entity.Balance) response.DepositRegistration); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		r0 = ret.Get(0).(response.DepositRegistration)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, entity.Balance) error); ok {
+		r1 = rf(ctx, arg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+
+}
+
+func (_m *Usecase) GetDepositBySellerid(ctx context.Context, seller_id string) (entity.BalanceRow, error) {
+	ret := _m.Called(ctx, seller_id)
+
+	var r0 entity.BalanceRow
+
+	if rf, ok := ret.Get(0).(func(context.Context, string) entity.BalanceRow); ok {
+		r0 = rf(ctx, seller_id)
+	} else {
+		r0 = ret.Get(0).(entity.BalanceRow)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, seller_id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+
+}
+
+func (_m *Usecase) GetSellerByEmail(ctx context.Context, email string) (entity.SellerRow, error) {
+	ret := _m.Called(ctx, email)
+
+	var r0 entity.SellerRow
+
+	if rf, ok := ret.Get(0).(func(context.Context, string) entity.SellerRow); ok {
+		r0 = rf(ctx, email)
+	} else {
+		r0 = ret.Get(0).(entity.SellerRow)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+
+}
+
+func (_m *Usecase) SellerRegister(ctx context.Context, arg entity.Seller) (sel response.SellerRegistration, err error) {
+	ret := _m.Called(ctx, arg)
+
+	var r0 response.SellerRegistration
+
+	if rf, ok := ret.Get(0).(func(context.Context, entity.Seller) response.SellerRegistration); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		r0 = ret.Get(0).(response.SellerRegistration)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, entity.Seller) error); ok {
+		r1 = rf(ctx, arg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

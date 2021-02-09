@@ -1,8 +1,8 @@
 package entity
 
 type Balance struct {
-	Amount   int    `json:"amount"`
-	SellerId string `json:"seller_id"`
+	Amount   int    `validate:"required,number" json:"amount"`
+	SellerId string `validate:"required" json:"seller_id"`
 }
 
 type BalanceRow struct {

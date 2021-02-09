@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/cpartogi/withdrawdeposit/constant"
 	"github.com/cpartogi/withdrawdeposit/entity"
@@ -40,9 +39,6 @@ func (q *Queries) DepositBalanceLog(ctx context.Context, seller_id string, date_
 	rows, err := q.db.QueryContext(ctx, getDepositBalanceLog, seller_id, date_from, date_to)
 
 	defer rows.Close()
-
-	fmt.Println(getDepositBalanceLog)
-	fmt.Println(seller_id)
 
 	var y []response.BalanceLog
 	var i response.BalanceLog

@@ -10,6 +10,7 @@ import (
 
 	sql "database/sql"
 
+	response "github.com/cpartogi/withdrawdeposit/schema/response"
 	uuid "github.com/google/uuid"
 )
 
@@ -326,6 +327,27 @@ func (_m *Repository) UpdateVerificationCodeByUserID(ctx context.Context, arg en
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, entity.UpdateVerificationCodeByUserIDParams) error); ok {
 		r1 = rf(ctx, arg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+//deposit balance
+func (_m *Repository) DepositBalance(ctx context.Context, seller_id string) (bal response.Balance, err error) {
+	ret := _m.Called(ctx, seller_id)
+
+	var r0 response.Balance
+	if rf, ok := ret.Get(0).(func(context.Context, string) response.Balance); ok {
+		r0 = rf(ctx, seller_id)
+	} else {
+		r0 = ret.Get(0).(response.Balance)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, seller_id)
 	} else {
 		r1 = ret.Error(1)
 	}

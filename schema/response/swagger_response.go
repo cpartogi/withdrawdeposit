@@ -103,7 +103,18 @@ type DataBalanceLog struct {
 type SwaggerDepositRegister struct {
 	Base
 	Data struct {
-		Amount   int    `json:"amount,omitempty"`
-		SellerId string `json:"seller_id,omitempty"`
+		Amount   int    `json:"amount"`
+		SellerId string `json:"seller_id"`
+	} `json:"data"`
+}
+
+type SwaggerSellerRegister struct {
+	Base
+	Data struct {
+		SellerName          string `json:"seller_name"`
+		SellerEmail         string `json:"seller_email"`
+		SellerBankCode      string `json:"seller_bank_code"`
+		SellerAccountName   string `json:"seller_account_name"`
+		SellerAccountNumber string `json:"seller_account_number"`
 	} `json:"data"`
 }
