@@ -2,13 +2,13 @@ package constant
 
 const (
 	//VerifEmailSubject is
-	VerifEmailSubject = "[Tradaru] Verify your Email"
+	VerifEmailSubject = "[clientname] Verify your Email"
 
 	//SendOTPEmailSubject is
-	SendOTPEmailSubject = "[Tradaru] Your SMS Verification Code"
+	SendOTPEmailSubject = "[clientname] Your SMS Verification Code"
 
 	//SendResetPasswordSubject is
-	SendResetPasswordSubject = "[Tradaru] Your Reset Password Verification Code"
+	SendResetPasswordSubject = "[clientname] Your Reset Password Verification Code"
 )
 
 const (

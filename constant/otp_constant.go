@@ -11,7 +11,7 @@ const (
 
 const (
 	// SMSOTPText for
-	SMSOTPText = "JANGAN MEMBERITAHU KODE RAHASIA INI KE SIAPAPUN termasuk pihak TRADARU. Berikut KODE RAHASIA untuk masuk:"
+	SMSOTPText = "JANGAN MEMBERITAHU KODE RAHASIA INI KE SIAPAPUN termasuk pihak clientname. Berikut KODE RAHASIA untuk masuk:"
 )
 
 const (

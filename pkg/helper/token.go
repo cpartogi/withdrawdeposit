@@ -12,7 +12,7 @@ import (
 )
 
 // ApplicationName is for JWT Application Name
-const ApplicationName = "TradaruAuth"
+const ApplicationName = "clientnameAuth"
 
 // JWTSigningMethod is JWT's signing method
 var jwtSigningMethod = jwt.SigningMethodHS256
