@@ -493,3 +493,96 @@ func TestSellerRegister(t *testing.T) {
 		})
 	}
 }
+
+func TestDisburseLog(t *testing.T) {
+	type input struct {
+		transaction_id string
+		date_from      string
+		date_to        string
+	}
+
+	type output struct {
+		err        error
+		statusCode int
+	}
+	cases := []struct {
+		name           string
+		expectedInput  input
+		expectedOutput output
+		configureMock  func(
+			payload input,
+			mockWithdraw *mocks.Usecase,
+		)
+	}{
+		{
+			name: "#1 success disburse log",
+			expectedInput: input{
+				transaction_id: "31123121",
+				date_from:      "2021-02-01",
+				date_to:        "2021-02-05",
+			},
+			expectedOutput: output{nil, http.StatusOK},
+			configureMock: func(
+				payload input,
+				mockWithdraw *mocks.Usecase,
+			) {
+				disResponse := []response.DisburseLog{}
+				mockWithdraw.
+					On("DisburseLog", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+					Return(disResponse, nil)
+			},
+		},
+		{
+			name: "#2 internal server error deposit log",
+			expectedInput: input{
+				transaction_id: "423423",
+				date_from:      "2021-02-01",
+				date_to:        "2021-02-05",
+			},
+			expectedOutput: output{nil, http.StatusInternalServerError},
+			configureMock: func(
+				payload input,
+				mockWithdraw *mocks.Usecase,
+			) {
+				disResponse := []response.DisburseLog{}
+				mockWithdraw.
+					On("DisburseLog", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+					Return(disResponse, errorWithdraw)
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mockWithdraw := new(mocks.Usecase)
+
+			transaction_id := testCase.expectedInput.transaction_id
+
+			e := echo.New()
+
+			req, err := http.NewRequest(echo.GET, "/v1/disburse/log",
+				strings.NewReader(string(transaction_id)))
+
+			assert.NoError(t, err)
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+			c.SetPath("/v1/disburse/log")
+
+			testCase.configureMock(
+				testCase.expectedInput,
+				mockWithdraw,
+			)
+
+			handler := WithdrawHandler{
+				withdrawUsecase: mockWithdraw,
+			}
+
+			err = handler.DisburseLog(c)
+			assert.Equal(t, testCase.expectedOutput.err, err)
+			assert.Equal(t, testCase.expectedOutput.statusCode, rec.Code)
+
+		})
+	}
+}

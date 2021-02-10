@@ -16,4 +16,5 @@ type Repository interface {
 	GetDepositBySellerid(ctx context.Context, seller_id string) (entity.BalanceRow, error)
 	GetSellerByEmail(ctx context.Context, email string) (entity.SellerRow, error)
 	SellerRegister(ctx context.Context, arg entity.Seller) (sel response.SellerRegistration, err error)
+	DisburseLog(ctx context.Context, transaction_id string, date_from string, date_to string) (dis []response.DisburseLog, err error)
 }

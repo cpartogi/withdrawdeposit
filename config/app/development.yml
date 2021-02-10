@@ -6,11 +6,11 @@ auth:
   expire: "+30m"
 database:
     mysql: 
-      host: "127.0.0.1"
+      host: "192.168.1.10"
       port: "3306"
-      dbname: ""
-      user: ""
-      password: ""
+      dbname: "disbursement"
+      user: "root"
+      password: "root"
       sslmode: ""
 context:
   timeout: 2

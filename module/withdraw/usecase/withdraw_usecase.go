@@ -111,3 +111,15 @@ func (u *WithdrawUsecase) SellerRegister(ctx context.Context, sellerRegister ent
 	return seller, err
 
 }
+
+func (u *WithdrawUsecase) DisburseLog(ctx context.Context, transaction_id string, date_from string, date_to string) (dis []response.DisburseLog, err error) {
+	resp := []response.DisburseLog{}
+
+	disburse, err := u.withdrawRepo.DisburseLog(ctx, transaction_id, date_from, date_to)
+
+	if err != nil {
+		return resp, err
+	}
+
+	return disburse, err
+}

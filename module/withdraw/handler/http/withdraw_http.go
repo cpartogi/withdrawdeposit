@@ -24,6 +24,7 @@ func NewWithdrawHandler(e *echo.Echo, us withdraw.Usecase) {
 	withdrawrouter.GET("/deposit/log", handler.DepositBalanceLog)
 	withdrawrouter.POST("/deposit/register", handler.DepositRegister)
 	withdrawrouter.POST("/seller/register", handler.SellerRegister)
+	withdrawrouter.GET("/disburse/log", handler.DisburseLog)
 }
 
 // DepositBalance godoc
@@ -159,4 +160,37 @@ func (h *WithdrawHandler) SellerRegister(c echo.Context) error {
 	}
 
 	return utils.CreatedResponse(c, "Succes register seller data", reg)
+}
+
+// DisburseLog godoc
+// @Summary Disburse history
+// @Description Disburse history
+// @Tags Disburse
+// @Accept  json
+// @Produce  json
+// @Param transaction_id query string true "transaction id"
+// @Param date_from query string true "format YYYY-MM-DD"
+// @Param date_to query string true "format YYYY-MM-DD"
+// @Success 200 {object} response.SwaggerDisburseLog
+// @Failure 400 {object} response.Base
+// @Failure 404 {object} response.Base
+// @Failure 422 {object} response.Base
+// @Failure 500 {object} response.Base
+// @Router /v1/disburse/log [get]
+// Disburselog handles HTTP request for disbursement history
+func (h *WithdrawHandler) DisburseLog(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	queryValues := c.Request().URL.Query()
+	transactionId := queryValues.Get("transaction_id")
+
+	dateFrom := queryValues.Get("date_from")
+	dateTo := queryValues.Get("date_to")
+
+	bal, err := h.withdrawUsecase.DisburseLog(ctx, transactionId, dateFrom, dateTo)
+	if err != nil {
+		return utils.ErrorResponse(c, err, map[string]interface{}{})
+	}
+
+	return utils.SuccessResponse(c, constant.SuccessGetData, bal)
 }

@@ -399,3 +399,23 @@ func (_m *Usecase) SellerRegister(ctx context.Context, arg entity.Seller) (sel r
 
 	return r0, r1
 }
+
+func (_m *Usecase) DisburseLog(ctx context.Context, transaction_id string, date_from string, date_to string) (dis []response.DisburseLog, err error) {
+	ret := _m.Called(ctx, transaction_id, date_from, date_to)
+
+	var r0 []response.DisburseLog
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) []response.DisburseLog); ok {
+		r0 = rf(ctx, transaction_id, date_from, date_to)
+	} else {
+		r0 = ret.Get(0).([]response.DisburseLog)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, string, string) error); ok {
+		r1 = rf(ctx, transaction_id, date_from, date_to)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
